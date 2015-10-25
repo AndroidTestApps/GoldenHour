@@ -4,11 +4,17 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kylehebert on 10/24/15.
@@ -18,7 +24,6 @@ public class FlickrApiUtility {
 
     private static final String TAG = "FlickrAPIUtility";
     private String flickrKey = "45d845c1c326c12baa37283ffb174315"; //TODO Remove KEY before push
-    private Context mContext;
 
     public byte[] getUrlBytes(String urlString) throws IOException {
         URL url = new URL(urlString);
@@ -49,7 +54,10 @@ public class FlickrApiUtility {
         return  new String(getUrlBytes(urlString));
     }
 
-    public void fetchPhotos() {
+    public List<FlickrPhoto> fetchPhotos() {
+
+        List<FlickrPhoto> photos = new ArrayList<>();
+
         try {
             String url = Uri.parse("https://api.flickr.com/services/rest")
                     .buildUpon()
@@ -61,8 +69,39 @@ public class FlickrApiUtility {
                     .build().toString();
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON: " + jsonString);
+            JSONObject jsonObject = new JSONObject(jsonString);
+            parsePhotos(photos,jsonObject);
+        } catch (JSONException je) {
+            Log.e(TAG, "Failed to parse JSON", je);
         } catch (IOException ioe) {
             Log.e(TAG, "Failed to fetch photos", ioe);
+        }
+
+        return photos;
+    }
+
+    public void parsePhotos(List<FlickrPhoto> flickrPhotos, JSONObject jsonObject) throws
+            IOException, JSONException {
+        //get the JSON object "photos" and the array "photo" from the JSON response
+        JSONObject photosJsonObject = jsonObject.getJSONObject("photos");
+        JSONArray photoJsonArray = photosJsonObject.getJSONArray("photo");
+
+        //create a FlickrPhoto for every item in the array
+        for (int i = 0; i < photoJsonArray.length(); i++) {
+            JSONObject photoJsonObject = photoJsonArray.getJSONObject(i);
+
+            FlickrPhoto photo = new FlickrPhoto();
+            photo.setID(photoJsonObject.getString("id"));
+            photo.setCaption(photoJsonObject.getString("title"));
+
+            //ignore photos without a url
+            if (!photoJsonObject.has("url_s")) {
+                continue;
+            }
+
+            photo.setUrl(photoJsonObject.getString("url_s"));
+            flickrPhotos.add(photo);
+
         }
     }
 
