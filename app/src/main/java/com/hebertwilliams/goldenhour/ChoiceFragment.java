@@ -14,7 +14,7 @@ import android.widget.Button;
 public class ChoiceFragment extends Fragment {
 
     private Button cameraActivityButton;
-    private Button galleryFragmentButton;
+    private Button galleryActivityButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -25,12 +25,18 @@ public class ChoiceFragment extends Fragment {
         cameraActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(ChoiceFragment.this, CameraActivity.class);
+                Intent i = new Intent(getActivity(), CameraActivity.class);
                 startActivity(i);
             }
         });
-        galleryFragmentButton = (Button) v.findViewById(R.id.gallery_fragment_button);
-
+        galleryActivityButton = (Button) v.findViewById(R.id.gallery_fragment_button);
+        galleryActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getActivity(), FlickrActivity.class);
+                startActivity(i);
+            }
+        });
 
         return v;
     }
