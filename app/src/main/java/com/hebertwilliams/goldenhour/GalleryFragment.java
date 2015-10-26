@@ -26,6 +26,8 @@ public class GalleryFragment extends Fragment {
 
     private static final String TAG = "GalleryFragment";
 
+    private static final String GOLDEN_HOUR_QUERY = "golden hour";
+
     private RecyclerView mRecyclerView;
     private List<FlickrPhoto> mFlickrPhotos = new ArrayList<>();
     private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
@@ -73,6 +75,13 @@ public class GalleryFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         mThumbnailDownloader.clearQueue();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        //make sure to kill the background thread
+        mThumbnailDownloader.quit();
     }
 
     @Override
@@ -143,7 +152,14 @@ public class GalleryFragment extends Fragment {
     private class getPhotosTask extends AsyncTask<Void,Void,List<FlickrPhoto>> {
         @Override
         protected List <FlickrPhoto> doInBackground(Void...params) {
-            return new FlickrApiUtility().fetchPhotos();
+            String query = GOLDEN_HOUR_QUERY;
+            //should never be null, left in in case we add a search function
+            if (query == null) {
+                return new FlickrApiUtility().getRecentPhotos();
+            } else {
+                return  new FlickrApiUtility().getGoldenHourPhotos(query);
+            }
+
         }
 
         @Override

@@ -1,6 +1,5 @@
 package com.hebertwilliams.goldenhour;
 
-import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
@@ -23,7 +22,21 @@ import java.util.List;
 public class FlickrApiUtility {
 
     private static final String TAG = "FlickrAPIUtility";
-    private String flickrKey = "45d845c1c326c12baa37283ffb174315";
+
+    private static String FLICKR_API_KEY = "45d845c1c326c12baa37283ffb174315";
+
+    private static final String GET_RECENT_PHOTOS = "flickr.photos.getRecent";
+    private static final String SEARCH_GOLDEN_HOUR = "flickr.photos.search";
+    private static final Uri ENDPOINT = Uri
+            .parse("https://api.flickr.com/services/rest/")
+            .buildUpon()
+            .appendQueryParameter("api_key", FLICKR_API_KEY)
+            .appendQueryParameter("format", "json")
+            .appendQueryParameter("nojsoncallback", "1")
+            .appendQueryParameter("extras", "url_s")
+            .build();
+
+
 
     public byte[] getUrlBytes(String urlString) throws IOException {
         URL url = new URL(urlString);
@@ -54,19 +67,30 @@ public class FlickrApiUtility {
         return  new String(getUrlBytes(urlString));
     }
 
-    public List<FlickrPhoto> fetchPhotos() {
+    /*
+    this method fetches recent photos only, by design should never be called
+    it's a relic of my initial test build, but I left it in in case we wanted to
+    use it as a fall back if Golden Hour photos can't be found
+     */
+    public List<FlickrPhoto> getRecentPhotos() {
+        String url = buildUrl(GET_RECENT_PHOTOS, null);
+        return downloadGalleryPhotos(url);
+    }
+
+    /*
+    this is the default methods the app will use to search
+    /TODO need to add location info to search
+     */
+    public List<FlickrPhoto> getGoldenHourPhotos(String query) {
+        String url = buildUrl(SEARCH_GOLDEN_HOUR, query);
+        return downloadGalleryPhotos(url);
+    }
+
+    private List<FlickrPhoto> downloadGalleryPhotos(String url) {
 
         List<FlickrPhoto> photos = new ArrayList<>();
 
         try {
-            String url = Uri.parse("https://api.flickr.com/services/rest")
-                    .buildUpon()
-                    .appendQueryParameter("method", "flickr.photos.getRecent")
-                    .appendQueryParameter("api_key", flickrKey)
-                    .appendQueryParameter("format", "json")
-                    .appendQueryParameter("nojsoncallback", "1")
-                    .appendQueryParameter("extras", "url_s")
-                    .build().toString();
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON: " + jsonString);
             JSONObject jsonObject = new JSONObject(jsonString);
@@ -78,6 +102,17 @@ public class FlickrApiUtility {
         }
 
         return photos;
+    }
+
+    private String buildUrl(String method, String query) {
+        Uri.Builder builder = ENDPOINT.buildUpon()
+                .appendQueryParameter("method", method);
+
+        if (method.equals(SEARCH_GOLDEN_HOUR)) { //this should always be true by design
+            builder.appendQueryParameter("text", query);
+        }
+
+        return builder.build().toString();
     }
 
     public void parsePhotos(List<FlickrPhoto> flickrPhotos, JSONObject jsonObject) throws
