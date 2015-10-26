@@ -1,13 +1,19 @@
 package com.hebertwilliams.goldenhour;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -22,6 +28,7 @@ public class GalleryFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private List<FlickrPhoto> mFlickrPhotos = new ArrayList<>();
+    private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
 
     public static GalleryFragment newInstance() {
         return new GalleryFragment();
@@ -32,6 +39,21 @@ public class GalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         new getPhotosTask().execute();
+
+        //start the background thread for downloading thumbnails
+        Handler responseHandler = new Handler(); //handles the response from the background task
+        mThumbnailDownloader = new ThumbnailDownloader<>(responseHandler);
+        mThumbnailDownloader.setThumbnailDownloadListener(new ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder>() {
+            @Override
+            public void onThumbnailDownloaded(PhotoHolder target, Bitmap thumbnail) {
+                Drawable drawable = new BitmapDrawable(getResources(),thumbnail);
+                target.bindDrawable(drawable);
+            }
+        });
+        mThumbnailDownloader.start();
+        //make sure the Looper has been called
+        mThumbnailDownloader.getLooper();
+        Log.i(TAG, "Background thread started");
     }
 
     @Override
@@ -47,6 +69,20 @@ public class GalleryFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mThumbnailDownloader.clearQueue();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        //make sure to kill the background thread
+        mThumbnailDownloader.quit();
+        Log.i(TAG, "Background thread destroyed");
+    }
+
     private void setupAdapter() {
         //confirm that the fragment has been attached to an activity and that getActivity will
         // not be null
@@ -56,16 +92,20 @@ public class GalleryFragment extends Fragment {
     }
 
     private class PhotoHolder extends RecyclerView.ViewHolder {
-        private TextView mTitleTextView;
+        private ImageView mPhotoImageView;
 
         public PhotoHolder(View photoView) {
             super(photoView);
-            mTitleTextView = (TextView) photoView;
+            mPhotoImageView = (ImageView) photoView
+                    .findViewById(R.id.fragment_gallery_image_view);
         }
 
-        public void bindFlickrPhoto(FlickrPhoto flickrPhoto) {
-            mTitleTextView.setText(flickrPhoto.toString());
+        public void bindDrawable(Drawable drawable) {
+            mPhotoImageView.setImageDrawable(drawable);
         }
+
+
+
     }
 
     private class PhotoAdapter extends RecyclerView.Adapter<PhotoHolder> {
@@ -78,14 +118,20 @@ public class GalleryFragment extends Fragment {
 
         @Override
         public PhotoHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-            TextView textView = new TextView(getActivity());
-            return new PhotoHolder(textView);
+            LayoutInflater inflater = LayoutInflater.from(getActivity());
+            View view = inflater.inflate(R.layout.gallery_item, viewGroup, false);
+            return new PhotoHolder(view);
+
         }
 
         @Override
         public void onBindViewHolder(PhotoHolder photoHolder, int position) {
             FlickrPhoto flickrPhoto = mFlickrPhotos.get(position);
-            photoHolder.bindFlickrPhoto(flickrPhoto);
+            //the ImageView will display a placeholder until images are downloaded
+            Drawable placeholder = getResources().getDrawable(R.drawable.imageplaceholder);
+            photoHolder.bindDrawable(placeholder);
+            //replace the image with a thumbnail using a background thread
+            mThumbnailDownloader.queueThumbnail(photoHolder,flickrPhoto.getUrl());
         }
 
         @Override

@@ -23,7 +23,7 @@ import java.util.List;
 public class FlickrApiUtility {
 
     private static final String TAG = "FlickrAPIUtility";
-    private String flickrKey = "45d845c1c326c12baa37283ffb174315"; //TODO Remove KEY before push
+    private String flickrKey = "45d845c1c326c12baa37283ffb174315";
 
     public byte[] getUrlBytes(String urlString) throws IOException {
         URL url = new URL(urlString);
