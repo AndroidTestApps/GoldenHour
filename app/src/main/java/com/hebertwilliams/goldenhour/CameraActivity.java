@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -18,7 +19,7 @@ import java.io.File;
 /**
  * Created by kylehebert on 10/23/15.
  */
-public class CameraActivity extends SingleFragmentActivity {
+public class CameraActivity extends AppCompatActivity {
 
 
     Button takePictureButton;
@@ -53,7 +54,7 @@ public class CameraActivity extends SingleFragmentActivity {
                 pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
 
                 if (pictureIntent.resolveActivity(CameraActivity.this.getPackageManager()) != null) {
-                    startActivityForResult(pictureIntent, TAKE_PICTURE_REQUEST);
+                   startActivityForResult(pictureIntent, TAKE_PICTURE_REQUEST);
                 } else {
                     Toast.makeText(CameraActivity.this, "No camera available", Toast.LENGTH_SHORT).show();
                 }
@@ -123,15 +124,14 @@ public class CameraActivity extends SingleFragmentActivity {
         return bitmap;
     }
 
-
-
-    @Override
-    protected Fragment createFragment() {
-        return new CameraFragment();
-    }
-
-    @Override
-    protected int getLayoutResId(){
-        return R.layout.activity_single_fragment;
-    }
+//    @Override
+//    protected Fragment createFragment() {
+//        return new CameraFragment();
+//    }
+//
+//    @Override
+//    protected int getLayoutResId(){
+//        return R.layout.activity_single_fragment;
+//    }
 }
+
