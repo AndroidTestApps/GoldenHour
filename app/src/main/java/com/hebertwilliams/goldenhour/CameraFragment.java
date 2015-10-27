@@ -2,6 +2,7 @@ package com.hebertwilliams.goldenhour;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,7 +15,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.File;
-import java.io.IOException;
 
 
 /**
@@ -38,7 +38,7 @@ public class CameraFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        View v = inflater.inflate(R.layout.fragment_choice, container, false);
+        View v = inflater.inflate(R.layout.fragment_camera, container, false);
 
         takePictureButton = (Button) v.findViewById(R.id.take_picture_button);
         takePictureButton.setOnClickListener(new View.OnClickListener() {
@@ -46,7 +46,7 @@ public class CameraFragment extends Fragment {
         public void onClick(View v) {
                 Context context = getActivity();
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(context.getPackageManager() != null) {
+                if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
                     startActivityForResult(takePictureIntent, TAKE_PICTURE_REQUEST);
                 }
 
@@ -78,14 +78,9 @@ public class CameraFragment extends Fragment {
     super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == -1 && requestCode == TAKE_PICTURE_REQUEST) {
-            pictureToDisplay = true;
-
-            //request new picture is added to device's media store
-            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            File file = new File(Environment.getExternalStorageDirectory(), filename);
-            imageFileUri = Uri.fromFile(file);
-            mediaScanIntent.setData(imageFileUri);
-
+            Bundle extras = data.getExtras();
+            Bitmap bmp = (Bitmap) extras.get("data");
+            pictureImageView.setImageBitmap(bmp);
 
         }
 }
