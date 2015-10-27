@@ -1,5 +1,6 @@
 package com.hebertwilliams.goldenhour;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,7 +44,13 @@ public class CameraFragment extends Fragment {
         takePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
         public void onClick(View v) {
-                takePhoto();
+                Context context = getActivity();
+                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (takePictureIntent.resolveActivity(context.getPackageManager() != null) {
+                    startActivityForResult(takePictureIntent, TAKE_PICTURE_REQUEST);
+                }
+
+                //takePhoto();
             }
         });
 
