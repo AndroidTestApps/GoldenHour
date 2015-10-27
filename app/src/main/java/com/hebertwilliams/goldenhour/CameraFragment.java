@@ -16,7 +16,6 @@ import android.widget.ImageView;
 
 import java.io.File;
 
-
 /**
  * Created by kylehebert on 10/23/15.
  */
@@ -26,13 +25,6 @@ public class CameraFragment extends Fragment {
     ImageView pictureImageView;
 
     private static final int TAKE_PICTURE_REQUEST = 0;
-
-    final String filename = "temp_photo.jpg";
-    Uri imageFileUri;
-
-    private static final String PICTURE_TO_DISPLAY = "picture has been taken";
-    boolean pictureToDisplay = false;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,8 +41,6 @@ public class CameraFragment extends Fragment {
                 if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
                     startActivityForResult(takePictureIntent, TAKE_PICTURE_REQUEST);
                 }
-
-                //takePhoto();
             }
         });
 
@@ -59,23 +49,10 @@ public class CameraFragment extends Fragment {
         return v;
     }
 
-
-    public void takePhoto() {
-        Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        try {
-            File file = new File(Environment.getExternalStorageDirectory(), filename);
-            imageFileUri = Uri.fromFile(file);
-            pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, file);
-            startActivityForResult(pictureIntent, TAKE_PICTURE_REQUEST);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void onActivityResult (int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
+
 
         if (resultCode == -1 && requestCode == TAKE_PICTURE_REQUEST) {
             Bundle extras = data.getExtras();
