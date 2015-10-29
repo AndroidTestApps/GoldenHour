@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">GoldenHour</string>
-    <string name="menu_settings">Settings</string>
+    <string name="menu_notify">Notify Me</string>
 </resources>
