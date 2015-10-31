@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">GoldenHour</string>
     <string name="menu_notify">Notify Me</string>
+    <string name="search_button">Search</string>
 </resources>

@@ -1,7 +1,11 @@
 package com.hebertwilliams.goldenhour;
 
+import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
+
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +28,7 @@ public class FlickrApiUtility {
     private static final String TAG = "FlickrAPIUtility";
 
     private static String FLICKR_API_KEY = "45d845c1c326c12baa37283ffb174315";
+
 
     private static final String GET_RECENT_PHOTOS = "flickr.photos.getRecent";
     private static final String SEARCH_GOLDEN_HOUR = "flickr.photos.search";
@@ -79,10 +84,17 @@ public class FlickrApiUtility {
 
     /*
     this is the default methods the app will use to search
-    /TODO need to add location info to search
      */
     public List<FlickrPhoto> getGoldenHourPhotos(String query) {
         String url = buildUrl(SEARCH_GOLDEN_HOUR, query);
+        return downloadGalleryPhotos(url);
+    }
+
+    /*
+    search for photos based on location
+     */
+    public List<FlickrPhoto> getGoldenHourPhotos(Location location) {
+        String url = buildUrl(location);
         return downloadGalleryPhotos(url);
     }
 
@@ -113,6 +125,17 @@ public class FlickrApiUtility {
         }
 
         return builder.build().toString();
+    }
+
+    /*
+    string builder for adding location search to the regular search
+     */
+    private String buildUrl(Location location) {
+        return ENDPOINT.buildUpon()
+                .appendQueryParameter("method", SEARCH_GOLDEN_HOUR)
+                .appendQueryParameter("lat", "" + location.getLatitude())
+                .appendQueryParameter("lon", "" + location.getLongitude())
+                .build().toString();
     }
 
     public void parsePhotos(List<FlickrPhoto> flickrPhotos, JSONObject jsonObject) throws
