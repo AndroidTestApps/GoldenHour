@@ -33,10 +33,6 @@ public class InspirationFragment extends Fragment {
     private Button mSearchButton;
     private GoogleApiClient mGoogleApiClient;
 
-    private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
-    private long FASTEST_INTERVAL = 2000; /* 2 sec */
-
-
     public static InspirationFragment newInstance() {
         return  new InspirationFragment();
     }
@@ -51,7 +47,7 @@ public class InspirationFragment extends Fragment {
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected(Bundle bundle) {
-                        //nothing for now
+                        findPhoto();
                     }
 
                     @Override
@@ -89,8 +85,8 @@ used to find a single image based on location for InspirationFragment
     private void findPhoto() {
         LocationRequest locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(UPDATE_INTERVAL)
-                .setFastestInterval(FASTEST_INTERVAL);
+                .setInterval(0)
+                .setNumUpdates(1);
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                 locationRequest, new LocationListener() {
                     @Override

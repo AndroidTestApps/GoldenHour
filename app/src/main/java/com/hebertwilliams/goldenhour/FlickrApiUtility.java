@@ -83,7 +83,7 @@ public class FlickrApiUtility {
     }
 
     /*
-    this is the default methods the app will use to search
+    this is the default method the app will use to search
      */
     public List<FlickrPhoto> getGoldenHourPhotos(String query) {
         String url = buildUrl(SEARCH_GOLDEN_HOUR, query);
@@ -128,7 +128,7 @@ public class FlickrApiUtility {
     }
 
     /*
-    string builder for adding location search to the regular search
+    string builder for searching by location
      */
     private String buildUrl(Location location) {
         return ENDPOINT.buildUpon()
