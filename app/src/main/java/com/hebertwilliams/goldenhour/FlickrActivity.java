@@ -16,7 +16,7 @@ public class FlickrActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment createFragment() {
-        return InspirationFragment.newInstance();
+        return GalleryFragment.newInstance();
     }
 
     @Override
