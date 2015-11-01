@@ -93,7 +93,7 @@ public class FlickrApiUtility {
     /*
     search for photos based on location
      */
-    public List<FlickrPhoto> getGoldenHourPhotos(Location location) {
+    public List<FlickrPhoto> getLocalPhotos(Location location) {
         String url = buildUrl(location);
         return downloadGalleryPhotos(url);
     }

@@ -3,6 +3,7 @@ package com.hebertwilliams.goldenhour;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,10 +14,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +40,8 @@ public class GalleryFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private List<FlickrPhoto> mFlickrPhotos = new ArrayList<>();
     private ThumbnailDownloader<PhotoHolder> mThumbnailDownloader;
+    private GoogleApiClient mGoogleApiClient;
+    private ProgressBar mProgressBar;
 
     public static GalleryFragment newInstance() {
         return new GalleryFragment();
@@ -43,7 +52,22 @@ public class GalleryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        new getPhotosTask().execute();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(Bundle bundle) {
+                        getActivity().invalidateOptionsMenu();
+                        getLocation();
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int i) {
+
+                    }
+                })
+                .build();
 
         //start the background thread for downloading thumbnails
         Handler responseHandler = new Handler(); //handles the response from the background task
@@ -51,7 +75,7 @@ public class GalleryFragment extends Fragment {
         mThumbnailDownloader.setThumbnailDownloadListener(new ThumbnailDownloader.ThumbnailDownloadListener<PhotoHolder>() {
             @Override
             public void onThumbnailDownloaded(PhotoHolder target, Bitmap thumbnail) {
-                Drawable drawable = new BitmapDrawable(getResources(),thumbnail);
+                Drawable drawable = new BitmapDrawable(getResources(), thumbnail);
                 target.bindDrawable(drawable);
             }
         });
@@ -72,6 +96,18 @@ public class GalleryFragment extends Fragment {
         setupAdapter();
 
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mGoogleApiClient.disconnect();
     }
 
     @Override
@@ -98,7 +134,28 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.fragment_gallery,menu);
+        inflater.inflate(R.menu.fragment_gallery, menu);
+
+        MenuItem goldenSearchItem = menu.findItem(R.id.menu_item_golden);
+        MenuItem localSearchItem = menu.findItem(R.id.menu_item_local);
+
+        //only want this enabled if the API client has connected
+        goldenSearchItem.setEnabled(mGoogleApiClient.isConnected());
+        localSearchItem.setEnabled(mGoogleApiClient.isConnected());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_golden:
+                new GetGoldenHourPhotosTask().execute();
+                return true;
+            case R.id.menu_item_local:
+                getLocation();
+                return true;
+            default: return super.onOptionsItemSelected(item);
+
+        }
     }
 
     private void setupAdapter() {
@@ -158,16 +215,51 @@ public class GalleryFragment extends Fragment {
         }
     }
 
-    private class getPhotosTask extends AsyncTask<Void,Void,List<FlickrPhoto>> {
+    /*
+    this method gets the devices location then passes it to GetPhotosTask
+     */
+    private void getLocation() {
+        LocationRequest locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(0)
+                .setNumUpdates(1);
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                locationRequest, new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+                        Log.i(TAG, "Got a location: " + location);
+                        new GetPhotosTask().execute(location);
+                    }
+                });
+
+    }
+
+    /*
+    AsyncTask for downloading photos based on a query of Golden Hour
+     */
+    private class GetGoldenHourPhotosTask extends AsyncTask<Void,Void, List<FlickrPhoto>> {
+
         @Override
-        protected List <FlickrPhoto> doInBackground(Void...params) {
+        protected List <FlickrPhoto>doInBackground(Void...params) {
             String query = GOLDEN_HOUR_QUERY;
-            //should never be null, left in in case we add a search function
-            if (query == null) {
-                return new FlickrApiUtility().getRecentPhotos();
-            } else {
-                return  new FlickrApiUtility().getGoldenHourPhotos(query);
-            }
+            return new FlickrApiUtility().getGoldenHourPhotos(query);
+        }
+
+        @Override
+        protected void onPostExecute(List<FlickrPhoto> flickrPhotos) {
+            mFlickrPhotos = flickrPhotos;
+            setupAdapter();
+        }
+
+    }
+
+    /*
+    AsyncTask for downloading local photos
+     */
+    private class GetPhotosTask extends AsyncTask<Location,Void,List<FlickrPhoto>> {
+        @Override
+        protected List <FlickrPhoto> doInBackground(Location...params) {
+            return  new FlickrApiUtility().getLocalPhotos(params[0]);
 
         }
 
