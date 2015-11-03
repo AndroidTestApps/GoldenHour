@@ -120,7 +120,7 @@ public class FlickrApiUtility {
         Uri.Builder builder = ENDPOINT.buildUpon()
                 .appendQueryParameter("method", method);
 
-        if (method.equals(SEARCH_GOLDEN_HOUR)) { //this should always be true by design
+        if (method.equals(SEARCH_GOLDEN_HOUR)) { //this should always be true
             builder.appendQueryParameter("text", query);
         }
 
