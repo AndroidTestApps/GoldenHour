@@ -1,5 +1,6 @@
 package com.hebertwilliams.goldenhour;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,7 +24,7 @@ public class CameraActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment createFragment() {
-        return new CameraFragment();
+        return new ChoiceFragment();
     }
 
     @Override
