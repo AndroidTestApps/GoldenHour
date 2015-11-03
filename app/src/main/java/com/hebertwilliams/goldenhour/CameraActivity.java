@@ -24,7 +24,7 @@ public class CameraActivity extends SingleFragmentActivity {
 
     @Override
     protected Fragment createFragment() {
-        return new ChoiceFragment();
+        return new CameraFragment();
     }
 
     @Override

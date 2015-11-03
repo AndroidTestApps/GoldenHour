@@ -1,7 +1,6 @@
 package com.hebertwilliams.goldenhour;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
@@ -9,6 +8,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.support.v4.app.Fragment;
+
 
 /**
  * Created by kylehebert on 10/23/15.
