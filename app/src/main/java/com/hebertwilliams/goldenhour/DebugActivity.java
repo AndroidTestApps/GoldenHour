@@ -13,7 +13,7 @@ public class DebugActivity extends SingleFragmentActivity {
     }
 
     @Override
-    protected int getLayoutResId(){
+    protected int getLayoutResId() {
         return R.layout.activity_single_fragment;
     }
 
