@@ -1,6 +1,8 @@
 package com.hebertwilliams.goldenhour;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,10 +18,13 @@ public class ChoiceFragment extends Fragment {
     private Button cameraActivityButton;
     private Button galleryActivityButton;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fragment_choice, container, false);
+
+
 
         cameraActivityButton = (Button) v.findViewById(R.id.camera_fragment_button);
         cameraActivityButton.setOnClickListener(new View.OnClickListener() {

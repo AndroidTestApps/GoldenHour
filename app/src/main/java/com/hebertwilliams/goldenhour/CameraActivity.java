@@ -1,137 +1,183 @@
 package com.hebertwilliams.goldenhour;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.app.Activity;
+import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.OrientationEventListener;
+import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.Toast;
+import android.widget.FrameLayout;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by kylehebert on 10/23/15.
  */
-public class CameraActivity extends SingleFragmentActivity {
+public class CameraActivity extends Activity {
 
+    private static final String TAG = CameraActivity.class.getSimpleName();
+    public static final int MEDIA_TYPE_IMAGE = 1;
 
-    Button takePictureButton;
-    ImageView pictureImageView;
+    private Camera mCamera;
+    private CameraPreview mView;
 
-    private static final int TAKE_PICTURE_REQUEST = 0;
+    private Camera.PictureCallback mPicture = new Camera.PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
 
-    final String filename = "temp_photo.jpg";
-    Uri imageFileUri;
+            File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+            if (pictureFile == null) {
+                Log.d(TAG, "Error creating media file, check storage permissions: " /*+
+                e.getMessage()*/);
+                return;
+            }
 
-    private static final String PICTURE_TO_DISPLAY = "picture has been taken";
-    boolean pictureToDisplay = false;
+            try {
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                fos.write(data);
+                fos.close();
+            } catch (FileNotFoundException fffe) {
+                Log.d(TAG, "File not found: " + fffe.getMessage());
+            } catch (IOException ioe) {
+                Log.d(TAG, "Error Accessing File: " + ioe.getMessage());
+            }
+
+        }
+    };
+
+    //TODO maybe throw in Choice fragment?
+    //check for camera
+    private boolean checkCameraHardware(Context context) {
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+            //has camera
+            return true;
+        } else {
+            //no camera
+            return false;
+        }
+    }
+
+    //method to get camera safely
+    public static Camera getCameraInstance() {
+        Camera c = null;
+        try {
+            //attempt to get camera
+            c = Camera.open();
+        } catch (Exception e) {
+
+        }
+        //will return null if camera is unavailable
+        return c;
+    }
+
+    //create a file Uri for saving image
+    private static Uri getOutputMediaFileUri(int type) {
+        return Uri.fromFile(getOutputMediaFile(type));
+    }
+
+    private static File getOutputMediaFile(int type) {
+        //TODO check SD card mounted?
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "GoldenHourApp");
+
+        //create storage directory if it doesnt already exist
+        if (! mediaStorageDir.exists()) {
+            if (! mediaStorageDir.mkdirs()) {
+                Log.d("GoldenHourApp", "Failed to create directory");
+                return null;
+            }
+        }
+
+        //Create media filename
+        String timeStamp = new SimpleDateFormat("yyyyMMDD_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
+        } else {
+            return null;
+        }
+        return mediaFile;
+    }
+
+    public static void setCameraDisplayOrientation(Activity activity, int cameraId,
+                                                   android.hardware.Camera camera) {
+        android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(cameraId, info);
+        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360; //compensates mirror
+        } else { //backfacing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        camera.setDisplayOrientation(result);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        //create camera instance
+        mCamera = getCameraInstance();
 
-        pictureImageView = (ImageView) findViewById(R.id.picture_image_view);
+        //Create preview and set it as the content of activity
+        mView = new CameraPreview(this, mCamera);
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_view);
+        preview.addView(mView);
 
-        takePictureButton = (Button) findViewById(R.id.take_picture_button);
+        setCameraDisplayOrientation(this, 1, mCamera);
+
+        Button takePictureButton = (Button) findViewById(R.id.take_picture_button);
         takePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-                File file = new File(Environment.getExternalStorageDirectory(), filename);
-                imageFileUri = Uri.fromFile(file);
-
-                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageFileUri);
-
-                if (pictureIntent.resolveActivity(CameraActivity.this.getPackageManager()) != null) {
-                    startActivityForResult(pictureIntent, TAKE_PICTURE_REQUEST);
-                } else {
-                    Toast.makeText(CameraActivity.this, "No camera available", Toast.LENGTH_SHORT).show();
-                }
+                mCamera.takePicture(null, null, mPicture);
             }
         });
-
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == TAKE_PICTURE_REQUEST) {
-            pictureToDisplay = true;
+    public void onPause() {
+        super.onPause();
+        releaseCamera();
+    }
 
-            //Request new picture is added to device's media store
-            Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-            File file = new File(Environment.getExternalStorageDirectory(), filename);
-            imageFileUri = Uri.fromFile(file);
-            mediaScanIntent.setData(imageFileUri);
-            sendBroadcast(mediaScanIntent);
+    private void releaseCamera() {
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
         }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outBundle) {
-        outBundle.putBoolean(PICTURE_TO_DISPLAY, pictureToDisplay);
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && pictureToDisplay) {
-            Bitmap image = scaleBitmap();
-            pictureImageView.setImageBitmap(image);
-        }
-    }
-
-
-    Bitmap scaleBitmap () {
-        // * Scale picture taken to fit into the ImageView */
-
-        //gather height and width of imageview
-        int imageViewHeight = pictureImageView.getHeight();
-        int imageViewWidth = pictureImageView.getWidth();
-
-        //decode file to find out how large the image is.
-        //Set the inJustDecodeBounds flag to true,
-        //the picture is decoded and stored in bOptions
-        BitmapFactory.Options bOptions = new BitmapFactory.Options();
-        bOptions.inJustDecodeBounds = true;
-        File file = new File(Environment.getExternalStorageDirectory(), filename);
-        Uri imageFileUri = Uri.fromFile(file);
-        String photoFilePath = imageFileUri.getPath();
-        BitmapFactory.decodeFile(photoFilePath, bOptions);
-
-        //What size is the picture?
-        int pictureHeight = bOptions.outHeight;
-        int pictureWidth = bOptions.outWidth;
-
-        //calculate resize
-        int scaleFactor = Math.min(pictureHeight / imageViewHeight, pictureWidth / imageViewWidth);
-
-        //Decode the image file into a new bitmap, scaled to fit the ImageView
-        bOptions.inJustDecodeBounds = false;
-        bOptions.inSampleSize = scaleFactor;
-
-        Bitmap bitmap = BitmapFactory.decodeFile(photoFilePath, bOptions);
-        return bitmap;
-    }
-
-
-
-    @Override
-    protected Fragment createFragment() {
-        return new CameraFragment();
-    }
-
-    @Override
-    protected int getLayoutResId(){
-        return R.layout.activity_single_fragment;
     }
 }
+
