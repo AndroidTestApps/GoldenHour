@@ -94,8 +94,8 @@ public class CameraActivity extends Activity {
                 Environment.DIRECTORY_PICTURES), "GoldenHourApp");
 
         //create storage directory if it doesnt already exist
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
+        if (! mediaStorageDir.exists()) {
+            if (! mediaStorageDir.mkdirs()) {
                 Log.d("GoldenHourApp", "Failed to create directory");
                 return null;
             }
