@@ -2,12 +2,15 @@ package com.hebertwilliams.goldenhour;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.OrientationEventListener;
+import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -109,10 +112,39 @@ public class CameraActivity extends Activity {
         return mediaFile;
     }
 
+    public static void setCameraDisplayOrientation(Activity activity, int cameraId,
+                                                   android.hardware.Camera camera) {
+        android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(cameraId, info);
+        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+        }
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360; //compensates mirror
+        } else { //backfacing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+        camera.setDisplayOrientation(result);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        //TODO figure out what to call here
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
@@ -123,6 +155,8 @@ public class CameraActivity extends Activity {
         mView = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_view);
         preview.addView(mView);
+
+        setCameraDisplayOrientation(this, 1, mCamera);
 
         Button takePictureButton = (Button) findViewById(R.id.take_picture_button);
         takePictureButton.setOnClickListener(new View.OnClickListener() {
