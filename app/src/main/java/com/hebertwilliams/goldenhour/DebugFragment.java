@@ -23,10 +23,11 @@ public class DebugFragment extends Fragment {
     private static final String TAG = "DebugFragment";
 
     private GeoResponse mGeoResponse;
-    private String mSunsetHour;
-    private String mSunsetMinute;
+    private int mSunsetHour;
+    private int mSunsetMinute;
 
     private TextView mSunsetTextView;
+    private TextView mGoldenHourTextView;
 
 
     public static DebugFragment newInstance() {
@@ -38,7 +39,6 @@ public class DebugFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         new FetchLocationTask().execute();
-        new FetchAstronomyTask().execute(mGeoResponse);
     }
 
     @Override
@@ -47,7 +47,9 @@ public class DebugFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_debug, container, false);
 
         mSunsetTextView = (TextView) view.findViewById(R.id.sunset_textview);
-        mSunsetTextView.setText(mSunsetHour + mSunsetMinute);
+        mGoldenHourTextView = (TextView) view.findViewById(R.id.golden_hour_textview);
+
+
 
         return view;
 
@@ -64,6 +66,8 @@ public class DebugFragment extends Fragment {
         @Override
         protected void onPostExecute(GeoResponse geoResponse) {
             mGeoResponse = geoResponse;
+            new FetchAstronomyTask().execute(mGeoResponse);
+
         }
     }
 
@@ -79,6 +83,8 @@ public class DebugFragment extends Fragment {
         protected void onPostExecute(AstroResponse astroResponse) {
             mSunsetHour = astroResponse.getSunsetHour();
             mSunsetMinute = astroResponse.getSunsetMinute();
+            mSunsetTextView.setText(astroResponse.getSunsetTime());
+            mGoldenHourTextView.setText(astroResponse.getGoldenHour());
 
         }
     }

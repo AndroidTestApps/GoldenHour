@@ -5,22 +5,44 @@ package com.hebertwilliams.goldenhour.model;
  * from a wunderground api astronomy query
  */
 public class AstroResponse {
-    private String mSunsetHour;
-    private String mSunsetMinute;
+    private int mSunsetHour;
+    private int mSunsetMinute;
+    private String mSunsetTime;
+    private String mGoldenHour;
 
-    public String getSunsetHour() {
+    public int getSunsetHour() {
         return mSunsetHour;
     }
 
-    public void setSunsetHour(String sunsetHour) {
+    public void setSunsetHour(int sunsetHour) {
         mSunsetHour = sunsetHour;
     }
 
-    public String getSunsetMinute() {
+    public int getSunsetMinute() {
         return mSunsetMinute;
     }
 
-    public void setSunsetMinute(String sunsetMinute) {
+    public void setSunsetMinute(int sunsetMinute) {
         mSunsetMinute = sunsetMinute;
     }
+
+    public String getSunsetTime() {
+        if (mSunsetHour <= 12) {
+            mSunsetTime = String.valueOf(mSunsetHour) + ":" + String.valueOf(mSunsetMinute);
+        } else {
+            mSunsetTime = String.valueOf(mSunsetHour-12) + ":" + String.valueOf(mSunsetMinute);
+        }
+        return mSunsetTime;
+    }
+
+    public String getGoldenHour() {
+        if (mSunsetHour <= 12) {
+            mGoldenHour = String.valueOf(mSunsetHour - 1) + ":" + String.valueOf(mSunsetMinute);
+        } else {
+            mGoldenHour = String.valueOf(mSunsetHour - 13) + ":" + String.valueOf(mSunsetMinute);
+        }
+        return mGoldenHour;
+    }
+
+
 }

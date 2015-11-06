@@ -139,10 +139,11 @@ public class WundergroundApiUtility {
 
         if (featuresJsonObject.has("astronomy")) {
             //create an AstroResponse object and assign the JSON values to it
-            JSONObject sunsetJsonObject = jsonObject.getJSONObject("sunset");
+            JSONObject moonPhaseJsonObject = jsonObject.getJSONObject("moon_phase");
+            JSONObject sunsetJsonObject = moonPhaseJsonObject.getJSONObject("sunset");
             AstroResponse astroResponse = new AstroResponse();
-            astroResponse.setSunsetHour(sunsetJsonObject.getString("hour"));
-            astroResponse.setSunsetMinute(sunsetJsonObject.getString("minute"));
+            astroResponse.setSunsetHour(sunsetJsonObject.getInt("hour"));
+            astroResponse.setSunsetMinute(sunsetJsonObject.getInt("minute"));
 
             //add the object to the list
             responses.add(astroResponse);
