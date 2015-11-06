@@ -24,7 +24,7 @@ public class GoldenHourService extends IntentService {
 
     private static final String TAG = "GoldenHourService";
 
-    private static final int POLL_INTERVAL = 1000 * 60 * 10; // milliseconds * seconds * minutes
+    private static final int POLL_INTERVAL = 1000 * 60; // milliseconds * seconds * minutes
 
     public static Intent newIntent(Context context) {
         return new Intent(context, GoldenHourService.class);

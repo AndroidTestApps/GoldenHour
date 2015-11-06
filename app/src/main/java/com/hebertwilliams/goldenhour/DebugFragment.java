@@ -41,8 +41,7 @@ public class DebugFragment extends Fragment {
         new FetchLocationTask().execute();
 
         //start background service to check for sunset
-        Intent intent = GoldenHourService.newIntent(getActivity());
-        getActivity().startService(intent);
+        GoldenHourService.setServiceAlarm(getActivity(),true);
     }
 
     @Override
