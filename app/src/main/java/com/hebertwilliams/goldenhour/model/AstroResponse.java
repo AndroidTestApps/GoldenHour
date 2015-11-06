@@ -1,6 +1,5 @@
 package com.hebertwilliams.goldenhour.model;
 
-import android.text.method.DateTimeKeyListener;
 import android.util.Log;
 
 import java.text.ParseException;
@@ -17,7 +16,7 @@ public class AstroResponse {
 
     private int mSunsetHour;
     private int mSunsetMinute;
-    private String mSunsetTime;
+    private String mSunset;
     private String mGoldenHour;
 
     public int getSunsetHour() {
@@ -36,13 +35,13 @@ public class AstroResponse {
         mSunsetMinute = sunsetMinute;
     }
 
-    public String getSunsetTime() {
+    public String getSunset() {
         if (mSunsetHour <= 12) {
-            mSunsetTime = String.valueOf(mSunsetHour) + ":" + String.valueOf(mSunsetMinute);
+            mSunset = String.valueOf(mSunsetHour) + ":" + String.valueOf(mSunsetMinute);
         } else {
-            mSunsetTime = String.valueOf(mSunsetHour-12) + ":" + String.valueOf(mSunsetMinute);
+            mSunset = String.valueOf(mSunsetHour-12) + ":" + String.valueOf(mSunsetMinute);
         }
-        return mSunsetTime;
+        return mSunset;
     }
 
     public String getGoldenHour() {

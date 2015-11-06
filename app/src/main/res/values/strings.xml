@@ -3,4 +3,8 @@
     <string name="menu_notify">Notify Me</string>
     <string name="menu_golden_hour">Golden Hour</string>
     <string name ="menu_local_photos">Local Photos</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="nearby_photos">Photos Taken Near You</string>
+    <string name="sunset_today">The sun will set at %s</string>
+    <string name="golden_hour_today">The golden hour begins at %s</string>
 </resources>

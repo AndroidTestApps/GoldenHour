@@ -1,6 +1,5 @@
 package com.hebertwilliams.goldenhour;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -86,7 +85,7 @@ public class    DebugFragment extends Fragment {
         protected void onPostExecute(AstroResponse astroResponse) {
             mSunsetHour = astroResponse.getSunsetHour();
             mSunsetMinute = astroResponse.getSunsetMinute();
-            mSunsetTextView.setText(astroResponse.getSunsetTime());
+            mSunsetTextView.setText(astroResponse.getSunset());
             mGoldenHourTextView.setText(astroResponse.getGoldenHour());
             Log.i(TAG, "Date converted:" + astroResponse.getGoldenHourTime());
 
