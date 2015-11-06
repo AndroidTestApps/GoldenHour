@@ -1,11 +1,10 @@
-package com.hebertwilliams.goldenhour;
+package com.hebertwilliams.goldenhour.api;
 
 import android.location.Location;
 import android.net.Uri;
 import android.util.Log;
 
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
+import com.hebertwilliams.goldenhour.model.FlickrPhoto;
 
 import org.json.JSONArray;
 import org.json.JSONException;

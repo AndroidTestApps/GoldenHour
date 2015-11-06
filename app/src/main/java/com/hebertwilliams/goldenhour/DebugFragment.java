@@ -1,18 +1,18 @@
 package com.hebertwilliams.goldenhour;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hebertwilliams.goldenhour.api.WundergroundApiUtility;
 import com.hebertwilliams.goldenhour.model.AstroResponse;
 import com.hebertwilliams.goldenhour.model.GeoResponse;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -39,6 +39,10 @@ public class DebugFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         new FetchLocationTask().execute();
+
+        //start background service to check for sunset
+        Intent intent = GoldenHourService.newIntent(getActivity());
+        getActivity().startService(intent);
     }
 
     @Override
@@ -50,15 +54,14 @@ public class DebugFragment extends Fragment {
         mGoldenHourTextView = (TextView) view.findViewById(R.id.golden_hour_textview);
 
 
-
         return view;
 
     }
 
     private class FetchLocationTask extends AsyncTask<Void, Void, GeoResponse> {
         @Override
-        protected GeoResponse doInBackground(Void...params) {
-            List<Object> responses = new WundergroundApiUtility().fetchGeoRepsonse();
+        protected GeoResponse doInBackground(Void... params) {
+            List<Object> responses = new WundergroundApiUtility().fetchGeoResponse();
             GeoResponse geoResponse = (GeoResponse) responses.get(0);
             return geoResponse;
         }
@@ -71,9 +74,9 @@ public class DebugFragment extends Fragment {
         }
     }
 
-    private class FetchAstronomyTask extends AsyncTask<GeoResponse,Void,AstroResponse> {
+    private class FetchAstronomyTask extends AsyncTask<GeoResponse, Void, AstroResponse> {
         @Override
-        protected AstroResponse doInBackground(GeoResponse...params) {
+        protected AstroResponse doInBackground(GeoResponse... params) {
             List<Object> responses = new WundergroundApiUtility().fetchAstroResponse(mGeoResponse);
             AstroResponse astroResponse = (AstroResponse) responses.get(0);
             return astroResponse;

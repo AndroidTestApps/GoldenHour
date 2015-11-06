@@ -1,10 +1,19 @@
 package com.hebertwilliams.goldenhour;
 
+import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+import android.os.SystemClock;
 import android.util.Log;
+
+import com.hebertwilliams.goldenhour.api.WundergroundApiUtility;
+import com.hebertwilliams.goldenhour.model.AstroResponse;
+import com.hebertwilliams.goldenhour.model.GeoResponse;
+
+import java.util.List;
 
 /**
  * Created by kylehebert on 11/2/15. Will use WundergroundApiUtility
@@ -15,8 +24,25 @@ public class GoldenHourService extends IntentService {
 
     private static final String TAG = "GoldenHourService";
 
+    private static final int POLL_INTERVAL = 1000 * 60 * 10; // milliseconds * seconds * minutes
+
     public static Intent newIntent(Context context) {
         return new Intent(context, GoldenHourService.class);
+    }
+
+    public static void setServiceAlarm(Context context, boolean alarmIsOn) {
+        Intent intent = GoldenHourService.newIntent(context);
+        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        if (alarmIsOn) {
+            alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, SystemClock
+                    .elapsedRealtime(),POLL_INTERVAL,pendingIntent);
+        } else {
+            alarmManager.cancel(pendingIntent);
+            pendingIntent.cancel();
+        }
     }
 
     //default constructor required
@@ -31,7 +57,22 @@ public class GoldenHourService extends IntentService {
         if (!isNetworkAvailableAndConnected()) {
             return;
         }
-        Log.i(TAG, "Received an intent: " + intent);
+
+        //first fetch the current location
+        List<Object> geoResponses = new WundergroundApiUtility().fetchGeoResponse();
+
+        //then fetch astronomy data using the location response
+        List<Object> astroResponses = new WundergroundApiUtility().fetchAstroResponse
+                ((GeoResponse)geoResponses.get(0));
+
+        //now use the astronomy data to determine when the sun will set
+        AstroResponse astroResponse = (AstroResponse)astroResponses.get(0);
+        String goldenHourBegins = "The golden hour begins at " + astroResponse.getGoldenHour();
+        Log.i(TAG, goldenHourBegins);
+
+
+
+
     }
 
     /*

@@ -1,4 +1,4 @@
-package com.hebertwilliams.goldenhour;
+package com.hebertwilliams.goldenhour.api;
 
 import android.net.Uri;
 import android.util.Log;
@@ -87,7 +87,7 @@ public class WundergroundApiUtility {
     }
 
     //build a url for fetching location
-    public List<Object> fetchGeoRepsonse() {
+    public List<Object> fetchGeoResponse() {
         String url = buildGeoQueryUrl(GEO_QUERY);
         return fetchJsonResponse(url);
     }
