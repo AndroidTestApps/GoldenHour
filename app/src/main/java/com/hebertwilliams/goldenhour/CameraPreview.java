@@ -58,12 +58,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
 
         Camera.Parameters parameters = mCamera.getParameters();
-        //parameters.set("orientation", "portrait");
-        List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-        Camera.Size optimalSize = getOptimalPreviewSize(sizes,
-                getResources().getDisplayMetrics().widthPixels,
+        Camera.Size size = getOptimalPreviewSize(w, h);
+        Camera.Size optimalSize = getOptimalPreviewSize(getResources().getDisplayMetrics().widthPixels,
                 getResources().getDisplayMetrics().heightPixels);
-        parameters.setPreviewSize(optimalSize.width, optimalSize.height);
+        parameters.setPreviewSize(size.width, size.height);
         mCamera.setParameters(parameters);
 
         //start preview with new settings
@@ -76,32 +74,20 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
     }
 
-    private Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
-        final double ASPECT_TOLERANCE = 0.1;
-        double targetRatio = (double) w/h;
+    private Camera.Size getOptimalPreviewSize(int width, int height) {
+        Camera.Size optimalSize=null;
+        Camera.Parameters p = mCamera.getParameters();
+        for (Camera.Size size : p.getSupportedPreviewSizes()) {
+            if (size.width<=width && size.height<=height) {
+                if (optimalSize==null) {
+                    optimalSize=size;
+                } else {
+                    int resultArea=optimalSize.width*optimalSize.height;
+                    int newArea=size.width*size.height;
 
-        if (sizes == null) return null;
-
-        Camera.Size optimalSize = null;
-        double minDiff = Double.MAX_VALUE;
-
-        int targetHeight = h;
-
-        //find size
-        for (Camera.Size size : sizes) {
-            double ratio = (double) size.width / size.height;
-            if (Math.abs(ratio - targetRatio) < minDiff) {
-                optimalSize = size;
-                minDiff = Math.abs(size.height - targetHeight);
-            }
-        }
-        //maths for optimal size
-        if (optimalSize == null) {
-            minDiff = Double.MAX_VALUE;
-            for (Camera.Size size : sizes) {
-                if (Math.abs(size.height - targetHeight) < minDiff) {
-                    optimalSize = size;
-                    minDiff = Math.abs(size.height = targetHeight);
+                    if (newArea>resultArea) {
+                        optimalSize=size;
+                    }
                 }
             }
         }
