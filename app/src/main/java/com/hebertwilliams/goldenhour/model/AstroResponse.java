@@ -1,10 +1,20 @@
 package com.hebertwilliams.goldenhour.model;
 
+import android.text.method.DateTimeKeyListener;
+import android.util.Log;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by kylehebert on 11/4/15. Model object for capturing the json response
  * from a wunderground api astronomy query
  */
 public class AstroResponse {
+
+    private static final String TAG = "AstroResponse";
+
     private int mSunsetHour;
     private int mSunsetMinute;
     private String mSunsetTime;
@@ -42,6 +52,19 @@ public class AstroResponse {
             mGoldenHour = String.valueOf(mSunsetHour - 13) + ":" + String.valueOf(mSunsetMinute);
         }
         return mGoldenHour;
+    }
+
+    public Date getGoldenHourTime() {
+        Date date = null;
+        String goldenHourString = getGoldenHour();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        try {
+            date = dateFormat.parse(goldenHourString);
+        } catch (ParseException pe){
+            Log.e(TAG, "Failed to convert date", pe);
+        }
+
+        return date;
     }
 
 

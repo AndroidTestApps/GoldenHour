@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * Created by kylehebert on 11/3/15.
  */
-public class DebugFragment extends Fragment {
+public class    DebugFragment extends Fragment {
 
     private static final String TAG = "DebugFragment";
 
@@ -87,6 +88,7 @@ public class DebugFragment extends Fragment {
             mSunsetMinute = astroResponse.getSunsetMinute();
             mSunsetTextView.setText(astroResponse.getSunsetTime());
             mGoldenHourTextView.setText(astroResponse.getGoldenHour());
+            Log.i(TAG, "Date converted:" + astroResponse.getGoldenHourTime());
 
         }
     }
