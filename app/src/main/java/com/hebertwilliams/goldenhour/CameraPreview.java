@@ -85,7 +85,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
 
-        //TODO camera orientation
         if (mHolder.getSurface() == null) {
             //view doesn't exist
             return;
