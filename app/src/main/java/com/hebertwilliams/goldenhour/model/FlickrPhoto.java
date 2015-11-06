@@ -1,4 +1,4 @@
-package com.hebertwilliams.goldenhour;
+package com.hebertwilliams.goldenhour.model;
 
 /**
  * Created by kylehebert on 10/25/15. Objects of this class will

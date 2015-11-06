@@ -38,7 +38,8 @@ public class ChoiceFragment extends Fragment {
         galleryActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getActivity(), FlickrActivity.class);
+                Intent i = new Intent(getActivity(), DebugActivity.class); //TODO Change this back
+
                 startActivity(i);
             }
         });

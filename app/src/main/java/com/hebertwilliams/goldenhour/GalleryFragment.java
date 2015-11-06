@@ -24,6 +24,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.hebertwilliams.goldenhour.api.FlickrApiUtility;
+import com.hebertwilliams.goldenhour.model.FlickrPhoto;
 
 import java.util.ArrayList;
 import java.util.List;
