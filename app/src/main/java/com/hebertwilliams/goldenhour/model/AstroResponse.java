@@ -2,9 +2,11 @@ package com.hebertwilliams.goldenhour.model;
 
 import android.util.Log;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by kylehebert on 11/4/15. Model object for capturing the json response
@@ -18,6 +20,8 @@ public class AstroResponse {
     private int mSunsetMinute;
     private String mSunset;
     private String mGoldenHour;
+
+
 
     public int getSunsetHour() {
         return mSunsetHour;
@@ -55,8 +59,9 @@ public class AstroResponse {
 
     public Date getGoldenHourTime() {
         Date date = null;
+        String formatPattern = "HH:mm";
         String goldenHourString = getGoldenHour();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(formatPattern, Locale.US);
         try {
             date = dateFormat.parse(goldenHourString);
         } catch (ParseException pe){

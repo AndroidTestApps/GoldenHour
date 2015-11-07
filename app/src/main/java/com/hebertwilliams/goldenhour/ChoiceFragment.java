@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -36,20 +39,13 @@ public class ChoiceFragment extends Fragment {
 
 
 
-
-    public static ChoiceFragment newInstance() {
-
-        return new ChoiceFragment();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         setRetainInstance(true);
         new FetchLocationTask().execute();
 
-        //start background service to check for sunset
-        GoldenHourService.setServiceAlarm(getActivity(),true);
     }
 
     @Override
@@ -95,6 +91,34 @@ public class ChoiceFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_choice, menu);
+
+        MenuItem toggleNotification = menu.findItem(R.id.menu_item_toggle_notification);
+        if (GoldenHourService.isServiceAlarmOn(getActivity())) {
+            //change menu text to stop notification
+            toggleNotification.setTitle(R.string.stop_notification);
+        } else {
+            toggleNotification.setTitle(R.string.start_notification);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.menu_item_toggle_notification:
+                boolean shouldStartAlarm = !GoldenHourService.isServiceAlarmOn(getActivity());
+                GoldenHourService.setServiceAlarm(getActivity(),shouldStartAlarm);
+                //refresh the menu to display the text change
+                getActivity().invalidateOptionsMenu();
+                return true;
+            default:
+                return super.onOptionsItemSelected(menuItem);
+        }
+    }
+
     private class FetchLocationTask extends AsyncTask<Void, Void, GeoResponse> {
         @Override
         protected GeoResponse doInBackground(Void... params) {
@@ -133,5 +157,7 @@ public class ChoiceFragment extends Fragment {
 
         }
     }
+
+
 
 }

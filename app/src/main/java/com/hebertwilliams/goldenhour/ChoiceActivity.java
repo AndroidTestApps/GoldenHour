@@ -1,5 +1,6 @@
 package com.hebertwilliams.goldenhour;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,10 @@ import android.widget.Button;
  * Created by kylehebert on 10/23/15.
  */
 public class  ChoiceActivity extends SingleFragmentActivity {
+
+    public static Intent newIntent(Context context) {
+        return new Intent(context, ChoiceActivity.class);
+    }
 
     @Override
     protected Fragment createFragment() {
