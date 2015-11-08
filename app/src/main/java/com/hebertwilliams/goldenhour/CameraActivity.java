@@ -26,7 +26,8 @@ import java.util.Date;
  */
 public class CameraActivity extends Activity {
 
-    private static final String TAG = CameraActivity.class.getSimpleName();
+
+    private static final String TAG = "GoldenHour";
     public static final int MEDIA_TYPE_IMAGE = 1;
 
     private Camera mCamera;
@@ -52,7 +53,7 @@ public class CameraActivity extends Activity {
             } catch (IOException ioe) {
                 Log.d(TAG, "Error Accessing File: " + ioe.getMessage());
             }
-
+            mCamera.startPreview();
         }
     };
 
@@ -86,7 +87,7 @@ public class CameraActivity extends Activity {
         //TODO check SD card mounted?
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "GoldenHourApp");
+                Environment.DIRECTORY_PICTURES), "direct");
 
         //create storage directory if it doesnt already exist
         if (!mediaStorageDir.exists()) {
