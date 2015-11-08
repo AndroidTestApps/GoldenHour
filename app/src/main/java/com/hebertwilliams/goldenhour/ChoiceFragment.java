@@ -21,7 +21,9 @@ import com.hebertwilliams.goldenhour.model.GeoResponse;
 import java.util.List;
 
 /**
- * Created by kylehebert on 10/23/15.
+ * Created by kylehebert on 10/23/15. This is the main activity, shows the current
+ * day's sunset time as well as golden hour start. Users can launch the camera
+ * or gallery fragments, as well as enable and disable notifications.
  */
 public class ChoiceFragment extends Fragment {
 
@@ -38,7 +40,6 @@ public class ChoiceFragment extends Fragment {
     private int mSunsetMinute;
 
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +53,6 @@ public class ChoiceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_choice, container, false);
-
 
 
         mCameraActivityButton = (Button) view.findViewById(R.id.camera_fragment_button);
@@ -75,17 +75,6 @@ public class ChoiceFragment extends Fragment {
 
         mSunsetTextView = (TextView) view.findViewById(R.id.sunset_textview);
         mGoldenHourTextView = (TextView) view.findViewById(R.id.golden_hour_textview);
-
-//        mNotifyMeButton = (Button) view.findViewById(R.id.notify_me_button);
-//        //this button should only be visible if the async tasks are successful
-//        mNotifyMeButton.setVisibility(View.INVISIBLE);
-//        mNotifyMeButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), DebugActivity.class);
-//                startActivity(intent);
-//            }
-//        });
 
 
         return view;
@@ -110,7 +99,7 @@ public class ChoiceFragment extends Fragment {
         switch (menuItem.getItemId()) {
             case R.id.menu_item_toggle_notification:
                 boolean shouldStartAlarm = !GoldenHourService.isServiceAlarmOn(getActivity());
-                GoldenHourService.setServiceAlarm(getActivity(),shouldStartAlarm);
+                GoldenHourService.setServiceAlarm(getActivity(), shouldStartAlarm);
                 //refresh the menu to display the text change
                 getActivity().invalidateOptionsMenu();
                 return true;
@@ -147,17 +136,15 @@ public class ChoiceFragment extends Fragment {
         protected void onPostExecute(AstroResponse astroResponse) {
             mSunsetHour = astroResponse.getSunsetHour();
             mSunsetMinute = astroResponse.getSunsetMinute();
-            String sunsetString = getString(R.string.sunset_today,astroResponse.getSunset());
+            String sunsetString = getString(R.string.sunset_today, astroResponse.getSunset());
             String goldenHourString = getString(R.string.golden_hour_today, astroResponse
                     .getGoldenHour());
             mSunsetTextView.setText(sunsetString);
             mGoldenHourTextView.setText(goldenHourString);
-//            mNotifyMeButton.setVisibility(View.VISIBLE);
             Log.i(TAG, "Date converted:" + astroResponse.getGoldenHourTime());
 
         }
     }
-
 
 
 }

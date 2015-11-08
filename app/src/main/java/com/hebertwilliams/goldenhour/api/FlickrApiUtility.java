@@ -41,10 +41,9 @@ public class FlickrApiUtility {
             .build();
 
 
-
     public byte[] getUrlBytes(String urlString) throws IOException {
         URL url = new URL(urlString);
-        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -58,7 +57,7 @@ public class FlickrApiUtility {
             int bytesRead = 0;
             byte[] buffer = new byte[1024];
             while ((bytesRead = inputStream.read(buffer)) > 0) {
-                outputStream.write(buffer,0,bytesRead);
+                outputStream.write(buffer, 0, bytesRead);
             }
             outputStream.close();
             return outputStream.toByteArray();
@@ -68,7 +67,7 @@ public class FlickrApiUtility {
     }
 
     public String getUrlString(String urlString) throws IOException {
-        return  new String(getUrlBytes(urlString));
+        return new String(getUrlBytes(urlString));
     }
 
     /*
@@ -105,7 +104,7 @@ public class FlickrApiUtility {
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON: " + jsonString);
             JSONObject jsonObject = new JSONObject(jsonString);
-            parsePhotos(photos,jsonObject);
+            parsePhotos(photos, jsonObject);
         } catch (JSONException je) {
             Log.e(TAG, "Failed to parse JSON", je);
         } catch (IOException ioe) {

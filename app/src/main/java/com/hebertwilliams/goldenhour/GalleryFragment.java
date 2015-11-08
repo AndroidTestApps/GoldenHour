@@ -31,7 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by kylehebert on 10/23/15.
+ * Created by kylehebert on 10/23/15. Displays a gallery of photos retrieved
+ * from Flickr based on recent nearby photos search or a recent photos
+ * tagged"golden hour"
  */
 public class GalleryFragment extends Fragment {
 
@@ -90,7 +92,7 @@ public class GalleryFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
             savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_gallery, container,false);
+        View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.fragment_gallery_recycler_view);
         mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 3));
@@ -119,7 +121,7 @@ public class GalleryFragment extends Fragment {
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
         //make sure to kill the background thread
         mThumbnailDownloader.quit();
@@ -155,7 +157,8 @@ public class GalleryFragment extends Fragment {
             case R.id.menu_item_local:
                 getLocation();
                 return true;
-            default: return super.onOptionsItemSelected(item);
+            default:
+                return super.onOptionsItemSelected(item);
 
         }
     }
@@ -163,7 +166,7 @@ public class GalleryFragment extends Fragment {
     private void setupAdapter() {
         //confirm that the fragment has been attached to an activity and that getActivity will
         // not be null
-        if(isAdded()) {
+        if (isAdded()) {
             mRecyclerView.setAdapter(new PhotoAdapter(mFlickrPhotos));
         }
     }
@@ -180,7 +183,6 @@ public class GalleryFragment extends Fragment {
         public void bindDrawable(Drawable drawable) {
             mPhotoImageView.setImageDrawable(drawable);
         }
-
 
 
     }
@@ -208,7 +210,7 @@ public class GalleryFragment extends Fragment {
             Drawable placeholder = getResources().getDrawable(R.drawable.imageplaceholder);
             photoHolder.bindDrawable(placeholder);
             //replace the image with a thumbnail using a background thread
-            mThumbnailDownloader.queueThumbnail(photoHolder,flickrPhoto.getUrl());
+            mThumbnailDownloader.queueThumbnail(photoHolder, flickrPhoto.getUrl());
         }
 
         @Override
@@ -239,10 +241,10 @@ public class GalleryFragment extends Fragment {
     /*
     AsyncTask for downloading photos based on a query of Golden Hour
      */
-    private class GetGoldenHourPhotosTask extends AsyncTask<Void,Void, List<FlickrPhoto>> {
+    private class GetGoldenHourPhotosTask extends AsyncTask<Void, Void, List<FlickrPhoto>> {
 
         @Override
-        protected List <FlickrPhoto>doInBackground(Void...params) {
+        protected List<FlickrPhoto> doInBackground(Void... params) {
             String query = GOLDEN_HOUR_QUERY;
             return new FlickrApiUtility().getGoldenHourPhotos(query);
         }
@@ -258,10 +260,10 @@ public class GalleryFragment extends Fragment {
     /*
     AsyncTask for downloading local photos
      */
-    private class GetPhotosTask extends AsyncTask<Location,Void,List<FlickrPhoto>> {
+    private class GetPhotosTask extends AsyncTask<Location, Void, List<FlickrPhoto>> {
         @Override
-        protected List <FlickrPhoto> doInBackground(Location...params) {
-            return  new FlickrApiUtility().getLocalPhotos(params[0]);
+        protected List<FlickrPhoto> doInBackground(Location... params) {
+            return new FlickrApiUtility().getLocalPhotos(params[0]);
 
         }
 

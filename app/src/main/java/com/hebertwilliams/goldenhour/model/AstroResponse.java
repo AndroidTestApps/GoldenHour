@@ -2,7 +2,6 @@ package com.hebertwilliams.goldenhour.model;
 
 import android.util.Log;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -20,7 +19,6 @@ public class AstroResponse {
     private int mSunsetMinute;
     private String mSunset;
     private String mGoldenHour;
-
 
 
     public int getSunsetHour() {
@@ -43,7 +41,7 @@ public class AstroResponse {
         if (mSunsetHour <= 12) {
             mSunset = String.valueOf(mSunsetHour) + ":" + String.valueOf(mSunsetMinute);
         } else {
-            mSunset = String.valueOf(mSunsetHour-12) + ":" + String.valueOf(mSunsetMinute);
+            mSunset = String.valueOf(mSunsetHour - 12) + ":" + String.valueOf(mSunsetMinute);
         }
         return mSunset;
     }
@@ -64,7 +62,7 @@ public class AstroResponse {
         SimpleDateFormat dateFormat = new SimpleDateFormat(formatPattern, Locale.US);
         try {
             date = dateFormat.parse(goldenHourString);
-        } catch (ParseException pe){
+        } catch (ParseException pe) {
             Log.e(TAG, "Failed to convert date", pe);
         }
 

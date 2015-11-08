@@ -2,14 +2,12 @@ package com.hebertwilliams.goldenhour;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.View;
 import android.widget.Button;
@@ -23,7 +21,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by kylehebert on 10/23/15.
+ * Created by kylehebert on 10/23/15. Activity for taking photos and storing
+ * them to disk
  */
 public class CameraActivity extends Activity {
 
@@ -60,13 +59,9 @@ public class CameraActivity extends Activity {
     //TODO maybe throw in Choice fragment?
     //check for camera
     private boolean checkCameraHardware(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            //has camera
-            return true;
-        } else {
-            //no camera
-            return false;
-        }
+        //has camera
+//no camera
+        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
     }
 
     //method to get camera safely
@@ -94,8 +89,8 @@ public class CameraActivity extends Activity {
                 Environment.DIRECTORY_PICTURES), "GoldenHourApp");
 
         //create storage directory if it doesnt already exist
-        if (! mediaStorageDir.exists()) {
-            if (! mediaStorageDir.mkdirs()) {
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
                 Log.d("GoldenHourApp", "Failed to create directory");
                 return null;
             }
