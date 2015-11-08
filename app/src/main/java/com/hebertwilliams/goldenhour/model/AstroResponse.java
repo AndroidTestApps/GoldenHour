@@ -1,11 +1,11 @@
 package com.hebertwilliams.goldenhour.model;
 
-import android.text.method.DateTimeKeyListener;
 import android.util.Log;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by kylehebert on 11/4/15. Model object for capturing the json response
@@ -17,8 +17,9 @@ public class AstroResponse {
 
     private int mSunsetHour;
     private int mSunsetMinute;
-    private String mSunsetTime;
+    private String mSunset;
     private String mGoldenHour;
+
 
     public int getSunsetHour() {
         return mSunsetHour;
@@ -36,13 +37,13 @@ public class AstroResponse {
         mSunsetMinute = sunsetMinute;
     }
 
-    public String getSunsetTime() {
+    public String getSunset() {
         if (mSunsetHour <= 12) {
-            mSunsetTime = String.valueOf(mSunsetHour) + ":" + String.valueOf(mSunsetMinute);
+            mSunset = String.valueOf(mSunsetHour) + ":" + String.valueOf(mSunsetMinute);
         } else {
-            mSunsetTime = String.valueOf(mSunsetHour-12) + ":" + String.valueOf(mSunsetMinute);
+            mSunset = String.valueOf(mSunsetHour - 12) + ":" + String.valueOf(mSunsetMinute);
         }
-        return mSunsetTime;
+        return mSunset;
     }
 
     public String getGoldenHour() {
@@ -56,11 +57,12 @@ public class AstroResponse {
 
     public Date getGoldenHourTime() {
         Date date = null;
+        String formatPattern = "HH:mm";
         String goldenHourString = getGoldenHour();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat(formatPattern, Locale.US);
         try {
             date = dateFormat.parse(goldenHourString);
-        } catch (ParseException pe){
+        } catch (ParseException pe) {
             Log.e(TAG, "Failed to convert date", pe);
         }
 

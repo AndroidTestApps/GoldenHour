@@ -23,7 +23,7 @@ public class ThumbnailDownloader<T> extends HandlerThread {
 
     private Handler mRequestHandler;
     //ConcurrentMap is a thread-safe version of HashMap
-    private ConcurrentMap<T, String> mRequestMap  = new ConcurrentHashMap<>();
+    private ConcurrentMap<T, String> mRequestMap = new ConcurrentHashMap<>();
 
     private Handler mResponseHandler; //used to send messages back to the main thread
     private ThumbnailDownloadListener<T> mThumbnailDownloadListener;
@@ -49,7 +49,7 @@ public class ThumbnailDownloader<T> extends HandlerThread {
     protected void onLooperPrepared() {
         mRequestHandler = new Handler() {
             @Override
-        public void handleMessage(Message message) {
+            public void handleMessage(Message message) {
                 if (message.what == MESSAGE_DOWNLOAD) {
                     T target = (T) message.obj;
                     Log.i(TAG, "Got a request for URL: " + mRequestMap.get(target));
@@ -65,8 +65,8 @@ public class ThumbnailDownloader<T> extends HandlerThread {
         if (url == null) {
             mRequestMap.remove(target);
         } else {
-            mRequestMap.put(target,url);
-            mRequestHandler.obtainMessage(MESSAGE_DOWNLOAD,target)
+            mRequestMap.put(target, url);
+            mRequestHandler.obtainMessage(MESSAGE_DOWNLOAD, target)
                     .sendToTarget();
         }
     }
@@ -94,7 +94,7 @@ public class ThumbnailDownloader<T> extends HandlerThread {
             }
 
             byte[] bitmapBytes = new FlickrApiUtility().getUrlBytes(url);
-            final Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes,0,bitmapBytes.length);
+            final Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapBytes, 0, bitmapBytes.length);
             Log.i(TAG, "Bitmap created");
 
             //run this on the main thread directly
@@ -111,7 +111,7 @@ public class ThumbnailDownloader<T> extends HandlerThread {
                     }
 
                     mRequestMap.remove(target);
-                    mThumbnailDownloadListener.onThumbnailDownloaded(target,bitmap);
+                    mThumbnailDownloadListener.onThumbnailDownloaded(target, bitmap);
                 }
             });
 
@@ -119,8 +119,6 @@ public class ThumbnailDownloader<T> extends HandlerThread {
             Log.e(TAG, "Error downloading image", ioe);
         }
     }
-
-
 
 
 }

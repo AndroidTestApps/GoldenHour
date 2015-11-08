@@ -7,7 +7,6 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by Josiah Williams on 11/2/2015.
@@ -77,18 +76,18 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     }
 
     private Camera.Size getOptimalPreviewSize(int width, int height) {
-        Camera.Size optimalSize=null;
+        Camera.Size optimalSize = null;
         Camera.Parameters p = mCamera.getParameters();
         for (Camera.Size size : p.getSupportedPreviewSizes()) {
-            if (size.width<=width && size.height<=height) {
-                if (optimalSize==null) {
-                    optimalSize=size;
+            if (size.width <= width && size.height <= height) {
+                if (optimalSize == null) {
+                    optimalSize = size;
                 } else {
-                    int resultArea=optimalSize.width*optimalSize.height;
-                    int newArea=size.width*size.height;
+                    int resultArea = optimalSize.width * optimalSize.height;
+                    int newArea = size.width * size.height;
 
-                    if (newArea>resultArea) {
-                        optimalSize=size;
+                    if (newArea > resultArea) {
+                        optimalSize = size;
                     }
                 }
             }

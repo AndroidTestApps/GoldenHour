@@ -8,7 +8,7 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
 /**
- * Created by kylehebert on 10/23/15.
+ * Created by kylehebert on 10/23/15. Host activity for GalleryFragment
  */
 public class GalleryActivity extends SingleFragmentActivity {
 
@@ -20,7 +20,7 @@ public class GalleryActivity extends SingleFragmentActivity {
     }
 
     @Override
-    protected int getLayoutResId(){
+    protected int getLayoutResId() {
         return R.layout.activity_single_fragment;
     }
 

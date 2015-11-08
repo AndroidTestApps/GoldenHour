@@ -43,7 +43,7 @@ public class WundergroundApiUtility {
     private final static String ASTRONOMY_QUERY = "astronomy";
     private final static String GEO_QUERY = "geolookup";
     private final static String QUERY = "q";
-    private final static String AUTO_IP_QUERY ="autoip.json";
+    private final static String AUTO_IP_QUERY = "autoip.json";
     private final static String JSON_QUERY = ".json";
 
     //creates the default query string
@@ -74,7 +74,7 @@ public class WundergroundApiUtility {
 
         Uri.Builder builder = ENDPOINT.buildUpon();
 
-        String zmw = "zmw:"+ geoResponse.getZip() + "." + geoResponse.getMagic() + "." + geoResponse.getWmo() + "." + JSON_QUERY;
+        String zmw = "zmw:" + geoResponse.getZip() + "." + geoResponse.getMagic() + "." + geoResponse.getWmo() + "." + JSON_QUERY;
 
         if (queryType.equals(ASTRONOMY_QUERY)) { //just a double check
             builder.appendPath(ASTRONOMY_QUERY);
@@ -108,7 +108,7 @@ public class WundergroundApiUtility {
             String jsonString = getUrlString(url);
             Log.i(TAG, "Received JSON: " + jsonString);
             JSONObject jsonObject = new JSONObject(jsonString);
-            parseJsonResponse(responses,jsonObject);
+            parseJsonResponse(responses, jsonObject);
         } catch (IOException ioe) {
             Log.e(TAG, "Failed to fetch JSON", ioe);
         } catch (JSONException je) {
@@ -159,7 +159,7 @@ public class WundergroundApiUtility {
      */
     public byte[] getUrlBytes(String urlSpec) throws IOException {
         URL url = new URL(urlSpec);
-        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -175,7 +175,7 @@ public class WundergroundApiUtility {
                 outputStream.write(buffer, 0, bytesRead);
             }
             outputStream.close();
-            return  outputStream.toByteArray();
+            return outputStream.toByteArray();
         } finally {
             connection.disconnect();
         }
@@ -188,8 +188,6 @@ public class WundergroundApiUtility {
     public String getUrlString(String urlSpec) throws IOException {
         return new String(getUrlBytes(urlSpec));
     }
-
-
 
 
 }
