@@ -2,6 +2,7 @@ package com.hebertwilliams.goldenhour;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.net.Uri;
@@ -87,7 +88,7 @@ public class CameraActivity extends Activity {
         //TODO check SD card mounted?
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "direct");
+                Environment.DIRECTORY_PICTURES), "Golden Hour Photos");
 
         //create storage directory if it doesnt already exist
         if (!mediaStorageDir.exists()) {
@@ -159,6 +160,15 @@ public class CameraActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mCamera.takePicture(null, null, mPicture);
+            }
+        });
+        Button galleryButton = (Button) findViewById(R.id.gallery_button);
+        galleryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("content://media/internal/images/media"));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(intent);
             }
         });
     }
