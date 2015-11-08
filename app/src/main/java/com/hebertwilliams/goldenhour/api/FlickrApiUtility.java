@@ -81,7 +81,10 @@ public class FlickrApiUtility {
     }
 
     /*
-    this method will search for photos tagged golden hour
+    this is the default method the app will use to search
+    it accepts a query string, which will be hard-coded to
+    "golden hour", this allows us to build in a search
+    function later
      */
     public List<FlickrPhoto> getGoldenHourPhotos(String query) {
         String url = buildUrl(SEARCH_GOLDEN_HOUR, query);

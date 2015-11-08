@@ -30,6 +30,9 @@
                   android:label="GoldenHour"
                   android:parentActivityName=".ChoiceActivity">
         </activity>
+        <activity android:name=".PhotoPageActivity"
+                  android:configChanges="keyboardHidden|orientation|screenSize">
+        </activity>
 
         <service android:name=".GoldenHourService" />
     </application>

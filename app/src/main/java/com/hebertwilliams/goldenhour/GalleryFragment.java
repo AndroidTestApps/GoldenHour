@@ -194,7 +194,8 @@ public class GalleryFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, mFlickrPhoto.getPhotoPageUri());
+            Intent intent = PhotoPageActivity.newIntent(getActivity(), mFlickrPhoto
+                    .getPhotoPageUri());
             startActivity(intent);
         }
 
