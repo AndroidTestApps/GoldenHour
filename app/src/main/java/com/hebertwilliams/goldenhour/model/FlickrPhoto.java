@@ -1,5 +1,7 @@
 package com.hebertwilliams.goldenhour.model;
 
+import android.net.Uri;
+
 /**
  * Created by kylehebert on 10/25/15. Objects of this class will
  * represent a single Flickr photo. Each FlickrPhoto will be filled
@@ -9,6 +11,7 @@ public class FlickrPhoto {
     private String mCaption;
     private String mID;
     private String mUrl;
+    private String mOwner;
 
     @Override
     public String toString() {
@@ -37,5 +40,22 @@ public class FlickrPhoto {
 
     public void setUrl(String url) {
         mUrl = url;
+    }
+
+    public String getOwner() {
+        return mOwner;
+    }
+
+    public void setOwner(String owner) {
+        mOwner = owner;
+    }
+
+    //generates a photo page URL
+    public Uri getPhotoPageUri() {
+        return Uri.parse("http://www.flickr.com/photos")
+                .buildUpon()
+                .appendPath(mOwner)
+                .appendPath(mID)
+                .build();
     }
 }

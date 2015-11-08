@@ -81,7 +81,7 @@ public class FlickrApiUtility {
     }
 
     /*
-    this is the default method the app will use to search
+    this method will search for photos tagged golden hour
      */
     public List<FlickrPhoto> getGoldenHourPhotos(String query) {
         String url = buildUrl(SEARCH_GOLDEN_HOUR, query);
@@ -89,7 +89,7 @@ public class FlickrApiUtility {
     }
 
     /*
-    search for photos based on location
+    search for recent photos based on location
      */
     public List<FlickrPhoto> getLocalPhotos(Location location) {
         String url = buildUrl(location);
@@ -156,6 +156,7 @@ public class FlickrApiUtility {
             }
 
             photo.setUrl(photoJsonObject.getString("url_s"));
+            photo.setOwner(photoJsonObject.getString("owner"));
             flickrPhotos.add(photo);
 
         }

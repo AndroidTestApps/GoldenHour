@@ -1,5 +1,6 @@
 package com.hebertwilliams.goldenhour;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -171,17 +172,30 @@ public class GalleryFragment extends Fragment {
         }
     }
 
-    private class PhotoHolder extends RecyclerView.ViewHolder {
+    private class PhotoHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
         private ImageView mPhotoImageView;
+        private FlickrPhoto mFlickrPhoto;
 
         public PhotoHolder(View photoView) {
             super(photoView);
             mPhotoImageView = (ImageView) photoView
                     .findViewById(R.id.fragment_gallery_image_view);
+            photoView.setOnClickListener(this);
         }
 
         public void bindDrawable(Drawable drawable) {
             mPhotoImageView.setImageDrawable(drawable);
+        }
+
+        public void bindFlickrPhoto(FlickrPhoto flickrPhoto) {
+            mFlickrPhoto = flickrPhoto;
+        }
+
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, mFlickrPhoto.getPhotoPageUri());
+            startActivity(intent);
         }
 
 
@@ -206,6 +220,7 @@ public class GalleryFragment extends Fragment {
         @Override
         public void onBindViewHolder(PhotoHolder photoHolder, int position) {
             FlickrPhoto flickrPhoto = mFlickrPhotos.get(position);
+            photoHolder.bindFlickrPhoto(flickrPhoto);
             //the ImageView will display a placeholder until images are downloaded
             Drawable placeholder = getResources().getDrawable(R.drawable.imageplaceholder);
             photoHolder.bindDrawable(placeholder);
