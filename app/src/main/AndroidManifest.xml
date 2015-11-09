@@ -27,7 +27,7 @@
 
         </activity>
         <activity android:name=".GalleryActivity"
-                  android:label="GoldenHour"
+                  android:label="Get Inspired"
                   android:parentActivityName=".ChoiceActivity">
         </activity>
 

@@ -14,7 +14,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/nearby_photos"
+        android:text="@string/get_inspired"
         android:id="@+id/gallery_fragment_button"
         android:layout_gravity="center_horizontal"/>
 
